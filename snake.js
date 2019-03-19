@@ -5,4 +5,4 @@ console.log("Finished pong, snake begins Monday");
 
 console.log("The master branch")
 
-console.log('The final bug fix 2')
+console.log('The final bug')
