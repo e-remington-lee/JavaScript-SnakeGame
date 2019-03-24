@@ -8,8 +8,11 @@ var rows = 60;
 
 var snakeL = 20;
 var snakeW = 10;
-var x;
-var y;
+
+
+var startX = 150;
+var startY = 200;
+
 var gridincrement = 10
 var moveIncrement = 10;
 var randomincrement = 10;
@@ -17,20 +20,17 @@ var appleX = 400
 var appleY = 300
 var snakeCube = 3
 
+var x = 100;
+var y = 100;
 // var upArrow = false
 // var downArrow = false
 // var rightArrow = false
 // var leftArrow = false
+// var upperx = 16;
+// var lowerx = 11;
 
-
-
-// var grid = []
-// for(i=0; i<80; i++) {
-//     grid[i] = [];
-//     for(j=0; j<60; j++);
-//     grid[i][j] = {x:0, y:0};
-// }
-
+// var lowery = 5;
+// var uppery = 6;
 
 
 
@@ -53,13 +53,12 @@ drawAll();
 
 
 function collisionDetection(){
-    if (x > appleX-1 && x <appleX+10 && y >appleY-1 && y<appleY+10) {
+    if (snake.x > appleX-1 && snake.x <appleX+10 && snake.y >appleY-1 && snake.y <appleY+10) {
         multiplyByFive();}
 
-    if (x > canvas.width-snakeW-1 || x <1 || y <1 || y > canvas.height){
+    if (x > canvas.width-snake-1 || x <1 || y <1 || y > canvas.height){
         snakeReset();
     }
-
 }
 
 function snakeReset(){
@@ -67,56 +66,36 @@ function snakeReset(){
     y = 300
     multiplyByFive();
     alert("you lose!")
- 
 }
 
+
 var snake = [
-    {x: 150, y: 150},
-    {x: 140, y: 150},
-    {x: 130, y: 150},
-    {x: 120, y: 150},
-    {x: 110, y: 150},
+    {x: startX, y: startY},
+    {x: startX-moveIncrement, y: startY},
+    {x: startX-2*moveIncrement, y: startY},
+    {x: startX-3*moveIncrement, y: startY},
+    {x: startX-4*moveIncrement, y: startY},
   ];
 
 
-
-
-var items = [
-    [1, 2],
-    [3, 4],
-    [5, 6]
-  ];
-  console.log(items[0][1]); //2, 0,0 returns 1
-  console.log(items); //returns the array
-
-
-// context.fillstyle = 'blue';
-// for(i=0; i<snakeCube; i++) {
-//     for(j=0;j<1;j++){
-//         var x = i*gridincrement;
-//         var y =j*gridincrement;
-        
-//         context.fillRect(x,y,gridincrement,gridincrement);
-
-//     }
 
 function drawSnake(){
 
-    snake.forEach(drawSnakePart);
+    snake.forEach(drawSnakeCube);
 }
 
 
-function drawSnakePart(snakePart){
+function drawSnakeCube(snakeCube){
 
     context.fillStyle = 'green';
     context.strokestyle = 'darkgreen';
     
-    context.fillRect(snakePart.x,snakePart.y,10,10);
-    context.strokeRect(snakePart.x,snakePart.y,10,10);
+    context.fillRect(snakeCube.x,snakeCube.y,10,10);
+    context.strokeRect(snakeCube.x,snakeCube.y,10,10);
 
 }
 
-
+ 
 
 
 function randomizeApple (max,min){
@@ -162,62 +141,52 @@ function keyDownHandler(ev){
     }
     if (code ==40){
         downArrow();
-    }
-
-
-    
+    }   
 }
 
 function upArrow(){
-    snakePart.y -= moveIncrement;
-    return console.log(y);
+    snake.unshift({x:startX, y:startY-moveIncrement});
+    startY-=moveIncrement;
+    snake.pop();
+    console.log(startX);
 }
 
 function downArrow(){
-    y +=moveIncrement;
-    return y,console.log(y);
+    snake.unshift({x:startX, y:startY+moveIncrement});
+    startY+=moveIncrement;
+    snake.pop();
+    console.log(startX);
 }
 
 function rightArrow(){
-    x +=moveIncrement;
-    return x,console.log(x);
+    snake.unshift({x:startX+moveIncrement, y:startY});
+    startX+=moveIncrement;
+    snake.pop();
+    console.log(startX);
+
 }
 
 function leftArrow(){
-    x -=moveIncrement;
-    return x,console.log(x);
+    snake.unshift({x:startX-moveIncrement, y:startY});
+    startX-=moveIncrement;
+    snake.pop();
+    console.log(startX);
+   
 }
 
 function drawAll () {
 
     // //canvas
     draw(0,0,canvas.width, canvas.height, 'black')
+  
 
-    //snake
-    // draw(x,y, snakeW,snakeL, 'blue');
+    //apple
+    draw(appleX, appleY, 11,11,'red');
+
     drawSnake();
 
-    
-    //apple
-    draw(appleX, appleY, 11,11,'red')
     collisionDetection();
     
-
-    // if(upArrow) {a
-    //     y-=2;
-    // }
-
-    // if(rightArrow) {
-    //     x+=2;
-    // }
-
-    // if(downArrow) {
-    //     y+=2;
-    // }
-
-    // if(leftArrow) {
-    //     x-=2;
-    // }
 
 
     function draw(leftX, topY, width, height, drawColor) {
@@ -234,4 +203,64 @@ function drawAll () {
 //     context.beginPath();
 //     context.arc(305, 305, 5, 0, Math.PI*2, true);
 //     context.fill();
+// }
+
+
+
+// var grid = []
+// for(i=0; i<80; i++) {
+//     grid[i] = [];
+//     for(j=0; j<60; j++);
+//     grid[i][j] = {x:0, y:0};
+// }
+
+
+    // if(upArrow) {
+    //     y-=2;
+    // }
+
+    // if(rightArrow) {
+    //     x+=2;
+    // }
+
+    // if(downArrow) {
+    //     y+=2;
+    // }
+
+    // if(leftArrow) {
+    //     x-=2;
+    // }
+
+            // context.beginPath();
+        // context.rect(snakex, snakey, 20, 20);
+        // context.fillStyle = "#0095DD";
+        // context.fill();
+        // context.closePath();
+
+// function testSnake(){
+// for(var i=lowerx; i<upperx; i++) {
+//     for(var j=lowery; j<uppery; j++){
+//         var snakex = i*moveIncrement;
+//         var snakey =j*moveIncrement;
+//         snake[i][j].x = snakex;
+//         snake[i][j].y = snakey;
+
+        
+//         context.fillStyle = 'green';
+//         context.strokestyle ='blue';
+
+//         context.fillRect(snakex,snakey, moveIncrement,moveIncrement);
+
+//         context.strokeRect(snakex,snakey,moveIncrement,moveIncrement);
+//         }
+//     }
+// }
+
+
+// var snake = [];
+// for(var i=lowerx; i<upperx; i++) {
+//     snake[i] = [];
+//     for(var j=lowery; j<uppery; j++) {
+//     snake[i][j] = {x: 0, y: 0};
+//     }
 // }
