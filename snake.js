@@ -12,12 +12,16 @@ var snakeW = 10;
 var startX = 150;
 var startY = 200;
 
-var gridincrement = 10
+var gridincrement = 10;
+
 var moveIncrement = 10;
+
 var randomincrement = 10;
+
 var appleX = 400
 var appleY = 300
-var snakeCube = 3
+
+var apples = 0
 
 var x = 100;
 var y = 100;
@@ -25,11 +29,8 @@ var y = 100;
 // var downArrow = false
 // var rightArrow = false
 // var leftArrow = false
-// var upperx = 16;
-// var lowerx = 11;
 
-// var lowery = 5;
-// var uppery = 6;
+
 
 
 
@@ -45,26 +46,32 @@ drawAll();
 
 },1000/fps);
 
-    // canvas.addEventListener('keydown', function(ev) {
-    //     var keyReturn = moveSnake(ev);
-    //     console.log(keyReturn);
-    // })
-
 
 function collisionDetection(){
-    if (snake.x > appleX-1 && snake.x <appleX+10 && snake.y >appleY-1 && snake.y <appleY+10) {
-        multiplyByFive();}
+    if (startX > appleX-1 && startX <appleX+10 && startY >appleY-1 && startY <appleY+10) {
+        multiplyByFive();
+        snake.push({x:1000, y:1000});
+        //intead of this, I might be able to make an if statement for when the snake eats the apple to not have the snake.pop()
+        //method occur, but this method works too, but you might be able to tell that the snake does't instantly get bigger
 
-    if (x > canvas.width-snake-1 || x <1 || y <1 || y > canvas.height){
+    }
+
+    if (startX > canvas.width-snake-1 || startX <1 || startY <1 || startY > canvas.height){
         snakeReset();
     }
 }
 
 function snakeReset(){
-    x = 300
-    y = 300
+    startX = 200
+    startY = 200
     multiplyByFive();
     alert("you lose!")
+    snake.unshift(
+        {x: startX, y: startY},
+        {x: startX-moveIncrement, y: startY},
+        {x: startX-2*moveIncrement, y: startY},
+        {x: startX-3*moveIncrement, y: startY},
+        {x: startX-4*moveIncrement, y: startY},)
 }
 
 
@@ -98,15 +105,13 @@ function drawSnakeCube(snakeCube){
 
 
 function randomizeApple (max,min){
-    return Math.floor(Math.random() *(max - min+1));
+    return Math.floor(Math.random() *(max - min+1)+min);
 }
 
 function multiplyByFive (){
-    appleX = randomizeApple(80,10)*randomincrement;
-    appleY = randomizeApple(60,10)*randomincrement;
-
-    // console.log(randomizeApple(80,30)*moveIncrement), console.log(randomizeApple(60,30)*moveIncrement);
-
+    appleX = randomizeApple(78,1)*randomincrement;
+    appleY = randomizeApple(58,1)*randomincrement;
+    apples+=1
 }
 document.addEventListener('keydown', keyDownHandler);
 
@@ -162,7 +167,6 @@ function rightArrow(){
     startX+=moveIncrement;
     snake.pop();
     console.log(startX);
-
 }
 
 function leftArrow(){
@@ -173,6 +177,10 @@ function leftArrow(){
    
 }
 
+function appleScore(){
+
+    context.fillText("Score: " + apples, 750,50)
+}
 function drawAll () {
 
     // //canvas
@@ -183,6 +191,11 @@ function drawAll () {
     draw(appleX, appleY, 11,11,'red');
 
     drawSnake();
+    appleScore();
+
+    if(appleX == 790 || appleX == 0 ||appleY == 0 || appleY == 590) {
+        alert("Error 4404: Apple outside boundary")
+    }
 
     collisionDetection();
     
