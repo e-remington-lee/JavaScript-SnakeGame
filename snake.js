@@ -12,7 +12,7 @@ var snakeW = 10;
 var startX = 150;
 var startY = 200;
 
-var gridincrement = 10;
+var direction = 'East'
 
 var moveIncrement = 10;
 
@@ -21,66 +21,122 @@ var randomincrement = 10;
 var appleX = 400
 var appleY = 300
 
-var apples = 0
+var score = 0
+var highScore = 0
 
 var x = 100;
 var y = 100;
-// var upArrow = false
-// var downArrow = false
-// var rightArrow = false
-// var leftArrow = false
-
-
-
-
 
 canvas = document.getElementById('snakeGame');
 context = canvas.getContext('2d');
 
-//This line was originally used to allow the 'keydown' eventlistener, but it seems to work without it now
 canvas.setAttribute('tabindex', 0);
 
+var fps = 15;
+setInterval(runGame,1000/fps);
 
+function runGame(){
 
-var fps = 60;
-setInterval(function() {
-drawAll();
+    drawCanvas();
 
+    drawApple();
 
-},1000/fps);
+    drawSnake();
 
+    drawAppleScore();
 
-function collisionDetection(){
-    if (startX > appleX-1 && startX <appleX+moveIncrement && startY >appleY-1 && startY <appleY+moveIncrement) {
-        multiplyByFive();
-        apples+=1;
-        snake.push({x:1000, y:1000});
-        //intead of this, I might be able to make an if statement for when the snake eats the apple to not have the snake.pop()
-        //method occur, but this method works too, but you might be able to tell that the snake does't instantly get bigger
-
-    }
-
-    if (startX > canvas.width-moveIncrement-1 || startX <1 || startY <1 || startY > canvas.height-moveIncrement-1){
+    var snakeBoundaryCollision = detectBoundaryCollision();
+    if (snakeBoundaryCollision){
+        alert("Game Over");
         snakeReset();
     }
-    
-    // if ((snakeHead.filter({x: startX, y: startY} = snake))){
-    //     console.log('yes!!')
-    // }
 
+    if(direction == 'East'){
+        rightArrow();
+    } 
+    if(direction == 'North'){
+        upArrow();
+    }
+    if(direction == 'South'){
+        downArrow();
+    }
+    if(direction == 'West'){
+        leftArrow();
+    }
 
+    var selfCollision = checkforSelfCollision();
+    if (selfCollision){
+        alert("Game Over")
+        snakeReset();
+        
+    }
+
+    snakeEatApple();
+}
+   
+
+function draw(leftX, topY, width, height, drawColor, lineColor) {
+    context.fillStyle = drawColor;
+    context.strokestyle = lineColor;
+
+    context.fillRect(leftX, topY, width, height);
+    context.strokeRect(leftX, topY, width, height)
+;
+  }
+
+function drawCanvas(){
+    draw(0,0,canvas.width, canvas.height, 'black', 'red')
+}
+
+function drawApple(){
+    draw(appleX, appleY, 10,10,'red', 'green');
+}
+
+function drawAppleScore(){
+    context.fillText("Score: " + score, 700,50)
+    context.fillText("High Score: " + highScore, 700,60)
+}
+
+function detectBoundaryCollision(){
+    if (startX > canvas.width-moveIncrement-1 || startX <1 || startY <1 || startY > canvas.height-moveIncrement-1){
+        return true;
+    }
+    return false;
+}
+
+function checkforSelfCollision(){
+   for (let i =0; i<snake.length; i++){
+       var snakeCubeX = snake[i].x;
+       var snakeCubeY = snake[i].y;
+       if(startX == snakeCubeX && startY == snakeCubeY){
+           return true;
+       }
+   }
+}
+
+// (startX > appleX-1 && startX <appleX+moveIncrement && startY >appleY-1 && startY <appleY+moveIncrement)
+function snakeEatApple(){
+    if (startX == appleX && startY == appleY) {
+        randomizeApplePlacement();
+        score+=1;
+        if (score>highScore){
+            highScore+=1
+        }
+        snake.push({x:1000, y:1000});
+    }
 }
 
 function snakeReset(){
-    startX = 200
-    startY = 200
-    multiplyByFive();
-    alert("You lose!")
- 
+    direction = 'East'
+    startX = 200;
+    startY = 200;
+   
+
+    score = 0;
+    
     while(snake.length>0){
         snake.pop();
     }
-
     snakeHead.unshift({x: startX, y: startY});
     snakeHead.pop();
     snake.unshift(
@@ -88,9 +144,12 @@ function snakeReset(){
         {x: startX-2*moveIncrement, y: startY},
         {x: startX-3*moveIncrement, y: startY},
         {x: startX-4*moveIncrement, y: startY},)
+
+    randomizeApplePlacement();
+
 }
 
-var snakeHead =[{x:startX, y: startY}];
+var snakeHead =[{x: startX, y: startY}];
 
 var snake = [
     {x: startX-moveIncrement, y: startY},
@@ -99,13 +158,10 @@ var snake = [
     {x: startX-4*moveIncrement, y: startY},
   ];
 
-
-
 function drawSnake(){
     snakeHead.forEach(drawSnakeCube)
     snake.forEach(drawSnakeCube);
 }
-
 
 function drawSnakeCube(snakeCube){
 
@@ -116,50 +172,31 @@ function drawSnakeCube(snakeCube){
     context.strokeRect(snakeCube.x,snakeCube.y,10,10);
 }
 
-
-
-//     for(var m=1;m<snake.length;m++){
-//         for(var n=1; n<snake.length;n++){
-//             var cubeX = snake.x
-//             var cubeY = snake.y
-
-//             if(startX > cubeX-1 && startX <cubeX+moveIncrement && startY >cubeY-1 && startY <cubeY+moveIncrement){
-//                 console.log('True!')
-//             }
-//         }
-//     }
-// }
-
- 
-
-
-function randomizeApple (max,min){
+function getRange (max,min){
     return Math.floor(Math.random() *(max - min+1)+min);
 }
 
-function multiplyByFive (){
-    appleX = randomizeApple(78,1)*randomincrement;
-    appleY = randomizeApple(58,1)*randomincrement;
-    
+function randomizeApplePlacement (){
+    appleX = getRange(78,1)*randomincrement;
+    appleY = getRange(58,1)*randomincrement;  
 }
+
 document.addEventListener('keydown', keyDownHandler);
 
-
 function keyDownHandler(ev){
-
     var code = ev.keyCode;
 
     if (code == 38){
-        upArrow();
+        direction = 'North';
     }
     if (code ==39){
-        rightArrow();
+        direction = 'East';
     }
     if (code ==37){
-        leftArrow();
+        direction = 'West';
     }
     if (code ==40){
-        downArrow();
+        direction = 'South';
     }   
 }
 
@@ -170,7 +207,8 @@ function upArrow(){
     startY-=moveIncrement;
     snake.pop();
     console.log(startX);
-}
+    }
+
 
 function downArrow(){
     snakeHead.unshift({x:startX, y:startY+moveIncrement});
@@ -196,147 +234,5 @@ function leftArrow(){
     snake.unshift({x:startX, y:startY})
     startX-=moveIncrement;
     snake.pop();
-    console.log(startX);
-   
+    console.log(startX);  
 }
-
-
-//         if (code == 38){
-//             upArrow = true;
-//         }
-
-//         if (upArrow){
-//             snake.unshift({x:startX, y:startY-moveIncrement});
-//             startY-=moveIncrement;
-//             snake.pop();
-   
-//         }
-//         if (code == 39){
-//             rightArrow = true;
-//             upArrow = false;
-//         }
-
-//         if (rightArrow){
-//             snake.unshift({x:startX+moveIncrement, y:startY});
-//             startX+=moveIncrement;
-//             snake.pop();
-  
-
-//     }
-// }
-    // if(upArrow) {
-    //     y-=2;
-    // }
-
-    // if(rightArrow) {
-    //     x+=2;
-    // }
-
-    // if(downArrow) {
-    //     y+=2;
-    // }
-
-    // if(leftArrow) {
-    //     x-=2;
-    // }
-
-    // if (code == 38){
-    //     upArrow = true;
-    // }
-    // if (code ==39){
-    //     rightArrow = true;
-    // }
-    // if (code ==37){
-    //     leftArrow = true;
-    // }
-    // if (code ==40){
-    //     downArrow = true;
-    // }
-   
-
-function appleScore(){
-
-    context.fillText("Score: " + apples, 750,50)
-}
-function drawAll () {
-
-    // //canvas
-    draw(0,0,canvas.width, canvas.height, 'black')
-  
-
-    //apple
-    draw(appleX, appleY, 11,11,'red');
-
-    drawSnake();
-    appleScore();
-
-  
-
-    if(appleX == 790 || appleX == 0 ||appleY == 0 || appleY == 590) {
-        alert("Error 4404: Apple outside boundary")
-    }
-
-    collisionDetection();
-    
-
-
-    function draw(leftX, topY, width, height, drawColor) {
-        context.fillStyle = drawColor;
-        context.fillRect(leftX, topY, width, height);
-      }
-}
-
-
-
-
-// function makeApple(){
-//     context.fillStyle = "red";
-//     context.beginPath();
-//     context.arc(305, 305, 5, 0, Math.PI*2, true);
-//     context.fill();
-// }
-
-
-
-// var grid = []
-// for(i=0; i<80; i++) {
-//     grid[i] = [];
-//     for(j=0; j<60; j++);
-//     grid[i][j] = {x:0, y:0};
-// }
-
-
-
-
-            // context.beginPath();
-        // context.rect(snakex, snakey, 20, 20);
-        // context.fillStyle = "#0095DD";
-        // context.fill();
-        // context.closePath();
-
-// function testSnake(){
-// for(var i=lowerx; i<upperx; i++) {
-//     for(var j=lowery; j<uppery; j++){
-//         var snakex = i*moveIncrement;
-//         var snakey =j*moveIncrement;
-//         snake[i][j].x = snakex;
-//         snake[i][j].y = snakey;
-
-        
-//         context.fillStyle = 'green';
-//         context.strokestyle ='blue';
-
-//         context.fillRect(snakex,snakey, moveIncrement,moveIncrement);
-
-//         context.strokeRect(snakex,snakey,moveIncrement,moveIncrement);
-//         }
-//     }
-// }
-
-
-// var snake = [];
-// for(var i=lowerx; i<upperx; i++) {
-//     snake[i] = [];
-//     for(var j=lowery; j<uppery; j++) {
-//     snake[i][j] = {x: 0, y: 0};
-//     }
