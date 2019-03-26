@@ -36,7 +36,10 @@ var y = 100;
 
 canvas = document.getElementById('snakeGame');
 context = canvas.getContext('2d');
+
+//This line was originally used to allow the 'keydown' eventlistener, but it seems to work without it now
 canvas.setAttribute('tabindex', 0);
+
 
 
 var fps = 60;
@@ -48,35 +51,48 @@ drawAll();
 
 
 function collisionDetection(){
-    if (startX > appleX-1 && startX <appleX+10 && startY >appleY-1 && startY <appleY+10) {
+    if (startX > appleX-1 && startX <appleX+moveIncrement && startY >appleY-1 && startY <appleY+moveIncrement) {
         multiplyByFive();
+        apples+=1;
         snake.push({x:1000, y:1000});
         //intead of this, I might be able to make an if statement for when the snake eats the apple to not have the snake.pop()
         //method occur, but this method works too, but you might be able to tell that the snake does't instantly get bigger
 
     }
 
-    if (startX > canvas.width-snake-1 || startX <1 || startY <1 || startY > canvas.height){
+    if (startX > canvas.width-moveIncrement-1 || startX <1 || startY <1 || startY > canvas.height-moveIncrement-1){
         snakeReset();
     }
+    
+    // if ((snakeHead.filter({x: startX, y: startY} = snake))){
+    //     console.log('yes!!')
+    // }
+
+
 }
 
 function snakeReset(){
     startX = 200
     startY = 200
     multiplyByFive();
-    alert("you lose!")
+    alert("You lose!")
+ 
+    while(snake.length>0){
+        snake.pop();
+    }
+
+    snakeHead.unshift({x: startX, y: startY});
+    snakeHead.pop();
     snake.unshift(
-        {x: startX, y: startY},
         {x: startX-moveIncrement, y: startY},
         {x: startX-2*moveIncrement, y: startY},
         {x: startX-3*moveIncrement, y: startY},
         {x: startX-4*moveIncrement, y: startY},)
 }
 
+var snakeHead =[{x:startX, y: startY}];
 
 var snake = [
-    {x: startX, y: startY},
     {x: startX-moveIncrement, y: startY},
     {x: startX-2*moveIncrement, y: startY},
     {x: startX-3*moveIncrement, y: startY},
@@ -86,7 +102,7 @@ var snake = [
 
 
 function drawSnake(){
-
+    snakeHead.forEach(drawSnakeCube)
     snake.forEach(drawSnakeCube);
 }
 
@@ -98,8 +114,21 @@ function drawSnakeCube(snakeCube){
     
     context.fillRect(snakeCube.x,snakeCube.y,10,10);
     context.strokeRect(snakeCube.x,snakeCube.y,10,10);
-
 }
+
+
+
+//     for(var m=1;m<snake.length;m++){
+//         for(var n=1; n<snake.length;n++){
+//             var cubeX = snake.x
+//             var cubeY = snake.y
+
+//             if(startX > cubeX-1 && startX <cubeX+moveIncrement && startY >cubeY-1 && startY <cubeY+moveIncrement){
+//                 console.log('True!')
+//             }
+//         }
+//     }
+// }
 
  
 
@@ -111,7 +140,7 @@ function randomizeApple (max,min){
 function multiplyByFive (){
     appleX = randomizeApple(78,1)*randomincrement;
     appleY = randomizeApple(58,1)*randomincrement;
-    apples+=1
+    
 }
 document.addEventListener('keydown', keyDownHandler);
 
@@ -119,20 +148,6 @@ document.addEventListener('keydown', keyDownHandler);
 function keyDownHandler(ev){
 
     var code = ev.keyCode;
-
-    // if (code == 38){
-    //     upArrow = true;
-    // }
-    // if (code ==39){
-    //     rightArrow = true;
-    // }
-    // if (code ==37){
-    //     leftArrow = true;
-    // }
-    // if (code ==40){
-    //     downArrow = true;
-    // }
-   
 
     if (code == 38){
         upArrow();
@@ -149,33 +164,95 @@ function keyDownHandler(ev){
 }
 
 function upArrow(){
-    snake.unshift({x:startX, y:startY-moveIncrement});
+    snakeHead.unshift({x:startX, y:startY-moveIncrement});
+    snakeHead.pop();
+    snake.unshift({x:startX, y:startY})
     startY-=moveIncrement;
     snake.pop();
     console.log(startX);
 }
 
 function downArrow(){
-    snake.unshift({x:startX, y:startY+moveIncrement});
+    snakeHead.unshift({x:startX, y:startY+moveIncrement});
+    snakeHead.pop();
+    snake.unshift({x:startX, y:startY})
     startY+=moveIncrement;
     snake.pop();
     console.log(startX);
 }
 
 function rightArrow(){
-    snake.unshift({x:startX+moveIncrement, y:startY});
+    snakeHead.unshift({x:startX+moveIncrement, y:startY});
+    snakeHead.pop();
+    snake.unshift({x:startX, y:startY})
     startX+=moveIncrement;
     snake.pop();
     console.log(startX);
 }
 
 function leftArrow(){
-    snake.unshift({x:startX-moveIncrement, y:startY});
+    snakeHead.unshift({x:startX-moveIncrement, y:startY});
+    snakeHead.pop();
+    snake.unshift({x:startX, y:startY})
     startX-=moveIncrement;
     snake.pop();
     console.log(startX);
    
 }
+
+
+//         if (code == 38){
+//             upArrow = true;
+//         }
+
+//         if (upArrow){
+//             snake.unshift({x:startX, y:startY-moveIncrement});
+//             startY-=moveIncrement;
+//             snake.pop();
+   
+//         }
+//         if (code == 39){
+//             rightArrow = true;
+//             upArrow = false;
+//         }
+
+//         if (rightArrow){
+//             snake.unshift({x:startX+moveIncrement, y:startY});
+//             startX+=moveIncrement;
+//             snake.pop();
+  
+
+//     }
+// }
+    // if(upArrow) {
+    //     y-=2;
+    // }
+
+    // if(rightArrow) {
+    //     x+=2;
+    // }
+
+    // if(downArrow) {
+    //     y+=2;
+    // }
+
+    // if(leftArrow) {
+    //     x-=2;
+    // }
+
+    // if (code == 38){
+    //     upArrow = true;
+    // }
+    // if (code ==39){
+    //     rightArrow = true;
+    // }
+    // if (code ==37){
+    //     leftArrow = true;
+    // }
+    // if (code ==40){
+    //     downArrow = true;
+    // }
+   
 
 function appleScore(){
 
@@ -192,6 +269,8 @@ function drawAll () {
 
     drawSnake();
     appleScore();
+
+  
 
     if(appleX == 790 || appleX == 0 ||appleY == 0 || appleY == 590) {
         alert("Error 4404: Apple outside boundary")
@@ -227,21 +306,7 @@ function drawAll () {
 // }
 
 
-    // if(upArrow) {
-    //     y-=2;
-    // }
 
-    // if(rightArrow) {
-    //     x+=2;
-    // }
-
-    // if(downArrow) {
-    //     y+=2;
-    // }
-
-    // if(leftArrow) {
-    //     x-=2;
-    // }
 
             // context.beginPath();
         // context.rect(snakex, snakey, 20, 20);
