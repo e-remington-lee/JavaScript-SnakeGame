@@ -9,8 +9,6 @@ var rows = 60;
 var snakeL = 20;
 var snakeW = 10;
 
-
-
 var direction = 'East'
 
 var moveIncrement = 10;
@@ -31,13 +29,12 @@ var startX = canvas.width/2;
 var startY = canvas.height/2;
 
 
-
 var fps = 15;
 setInterval(runGame,1000/fps);
 
 function runGame(){
 
-    drawBorder();
+  
     drawCanvas();
 
     drawApple();
@@ -84,12 +81,12 @@ function draw(leftX, topY, width, height, drawColor, lineColor) {
 ;
   }
 
-function drawBorder(){
-    draw(0,0,canvas.width, canvas.height,'gray', 'gray')
-}
+// function drawBorder(){
+//     draw(0,0,canvas.width, canvas.height,'gray', 'gray')
+// }
 
 function drawCanvas(){
-    draw(moveIncrement,moveIncrement,canvas.width-2*moveIncrement, canvas.height-2*moveIncrement, 'black', 'red')
+    draw(0,0,canvas.width, canvas.height, 'black', 'red')
 }
 
 function drawApple(){
@@ -103,8 +100,8 @@ function drawAppleScore(){
 }
 
 function detectBoundaryCollision(){
-    if (startX > canvas.width-moveIncrement-1 || startX < moveIncrement-1 || startY < moveIncrement-1
-        || startY > canvas.height-moveIncrement-1){
+    if (startX > canvas.width-1|| startX < -1 || startY < -1
+        || startY > canvas.height-1){
         return true;
     }
     return false;
