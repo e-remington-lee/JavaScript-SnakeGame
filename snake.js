@@ -9,8 +9,7 @@ var rows = 60;
 var snakeL = 20;
 var snakeW = 10;
 
-var startX = 150;
-var startY = 200;
+
 
 var direction = 'East'
 
@@ -18,25 +17,27 @@ var moveIncrement = 10;
 
 var randomincrement = 10;
 
-var appleX = 400
-var appleY = 300
+var appleX = 200
+var appleY = 200
 
 var score = 0
 var highScore = 0
 
-var x = 100;
-var y = 100;
-
 canvas = document.getElementById('snakeGame');
 context = canvas.getContext('2d');
-
 canvas.setAttribute('tabindex', 0);
+
+var startX = canvas.width/2;
+var startY = canvas.height/2;
+
+
 
 var fps = 15;
 setInterval(runGame,1000/fps);
 
 function runGame(){
 
+    drawBorder();
     drawCanvas();
 
     drawApple();
@@ -84,8 +85,12 @@ function draw(leftX, topY, width, height, drawColor, lineColor) {
 ;
   }
 
+function drawBorder(){
+    draw(0,0,canvas.width, canvas.height,'gray', 'gray')
+}
+
 function drawCanvas(){
-    draw(0,0,canvas.width, canvas.height, 'black', 'red')
+    draw(moveIncrement,moveIncrement,canvas.width-2*moveIncrement, canvas.height-2*moveIncrement, 'black', 'red')
 }
 
 function drawApple(){
@@ -98,7 +103,7 @@ function drawAppleScore(){
 }
 
 function detectBoundaryCollision(){
-    if (startX > canvas.width-moveIncrement-1 || startX <1 || startY <1 || startY > canvas.height-moveIncrement-1){
+    if (startX > canvas.width-moveIncrement-1 || startX < moveIncrement-1 || startY < moveIncrement-1 || startY > canvas.height-moveIncrement-1){
         return true;
     }
     return false;
@@ -127,11 +132,21 @@ function snakeEatApple(){
 }
 
 function snakeReset(){
-    direction = 'East'
-    startX = 200;
-    startY = 200;
-   
+    var randomStart = getRange(40,38);
 
+    if (randomStart == 38){
+        direction = 'North';
+    }
+    if (randomStart ==39){
+        direction = 'East';
+    }
+    if (randomStart ==40){
+        direction = 'South';
+    } 
+
+    startX = canvas.width/2;
+    startY = canvas.height/2;
+   
     score = 0;
     
     while(snake.length>0){
