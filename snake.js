@@ -68,8 +68,7 @@ function runGame(){
     var selfCollision = checkforSelfCollision();
     if (selfCollision){
         alert("Game Over")
-        snakeReset();
-        
+        snakeReset();  
     }
 
     snakeEatApple();
@@ -98,12 +97,14 @@ function drawApple(){
 }
 
 function drawAppleScore(){
-    context.fillText("Score: " + score, 700,50)
-    context.fillText("High Score: " + highScore, 700,60)
+    context.font = '15px Georgia'
+    context.fillText("Score: " + score, 690,40)
+    context.fillText("High Score: " + highScore, 690,55)
 }
 
 function detectBoundaryCollision(){
-    if (startX > canvas.width-moveIncrement-1 || startX < moveIncrement-1 || startY < moveIncrement-1 || startY > canvas.height-moveIncrement-1){
+    if (startX > canvas.width-moveIncrement-1 || startX < moveIncrement-1 || startY < moveIncrement-1
+        || startY > canvas.height-moveIncrement-1){
         return true;
     }
     return false;
@@ -119,7 +120,6 @@ function checkforSelfCollision(){
    }
 }
 
-// (startX > appleX-1 && startX <appleX+moveIncrement && startY >appleY-1 && startY <appleY+moveIncrement)
 function snakeEatApple(){
     if (startX == appleX && startY == appleY) {
         randomizeApplePlacement();
@@ -161,7 +161,6 @@ function snakeReset(){
         {x: startX-4*moveIncrement, y: startY},)
 
     randomizeApplePlacement();
-
 }
 
 var snakeHead =[{x: startX, y: startY}];
