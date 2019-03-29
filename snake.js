@@ -99,7 +99,7 @@ function drawAppleScore() {
 
 function stopIntervalFunction(mainGaime) {
     clearInterval(mainGaime);
-    alert("Game Over...Play Again?");
+    console.log("Game Over...Reloading...");
 }
 
 function moveSnake() {
