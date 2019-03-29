@@ -19,9 +19,14 @@ var moveIncrement = 10;
 
 var randomincrement = 10;
 
-
-var appleX = 200;
-var appleY = 200;
+var apple = {
+    x: 200,
+    y: 200,
+    length: 10,
+    width: 10,
+    color: 'red',
+    strokeColor: 'red',
+}
 
 var score = 0;
 var highScore = 0;
@@ -30,9 +35,14 @@ canvas = document.getElementById('snakeGame');
 context = canvas.getContext('2d');
 canvas.setAttribute('tabindex', 0);
 
-var startX = canvas.width / 2;
-var startY = canvas.height / 2;
-
+var snakeHead = {
+    x: canvas.width / 2,
+    y: canvas.width / 2,
+    length: 10,
+    width: 10,
+    color: 'green',
+    strokeColor: 'darkgreen',
+}
 
 var fps = 15;
 var mainGaime = setInterval(runGame, 1000 / fps);
@@ -65,8 +75,6 @@ function runGame() {
     snakeEatApple();
 }
 
-
-
 function draw(leftX, topY, width, height, drawColor, lineColor) {
     context.fillStyle = drawColor;
     context.strokestyle = lineColor;
@@ -80,7 +88,7 @@ function drawCanvas() {
 }
 
 function drawApple() {
-    draw(appleX, appleY, 10, 10, 'red', 'black');
+    draw(apple.x, apple.y, apple.length, apple.width, apple.color, apple.strokeColor);
 }
 
 function drawAppleScore() {
@@ -111,8 +119,8 @@ function moveSnake() {
 }
 
 function detectBoundaryCollision() {
-    if (startX > canvas.width - 1 || startX < -1 || startY < -1 ||
-        startY > canvas.height - 1) {
+    if (snakeHead.x > canvas.width - 1 || snakeHead.x < -1 || snakeHead.y < -1 ||
+        snakeHead.y > canvas.height - 1) {
         return true;
     }
     return false;
@@ -122,22 +130,22 @@ function checkforSelfCollision() {
     for (let i = 0; i < snake.length; i++) {
         var snakeCubeX = snake[i].x;
         var snakeCubeY = snake[i].y;
-        if (startX == snakeCubeX && startY == snakeCubeY) {
+        if (snakeHead.x == snakeCubeX && snakeHead.y == snakeCubeY) {
             return true;
         }
     }
 }
 
 function snakeEatApple() {
-    if (startX == appleX && startY == appleY) {
+    if (snakeHead.x == apple.x && snakeHead.y == apple.y) {
         randomizeApplePlacement();
         score += 1;
         if (score > highScore) {
             highScore += 1
         }
         snake.push({
-            x: 1000,
-            y: 1000
+            x: 10000000,
+            y: 10000000
         });
     }
 }
@@ -155,71 +163,71 @@ function snakeReset() {
         direction = DIRECTION.SOUTH;
     }
 
-    startX = canvas.width / 2;
-    startY = canvas.height / 2;
+    snakeHead.x = canvas.width / 2;
+    snakeHead.y = canvas.height / 2;
 
     score = 0;
 
     while (snake.length > 0) {
         snake.pop();
     }
-    snakeHead.unshift({
-        x: startX,
-        y: startY
+    snakeHeadPiece.unshift({
+        x: snakeHead.x,
+        y: snakeHead.y
     });
-    snakeHead.pop();
+    snakeHeadPiece.pop();
     snake.unshift({
-        x: startX - moveIncrement,
-        y: startY
+        x: snakeHead.x - moveIncrement,
+        y: snakeHead.y
     }, {
-        x: startX - 2 * moveIncrement,
-        y: startY
+        x: snakeHead.x - 2 * moveIncrement,
+        y: snakeHead.y
     }, {
-        x: startX - 3 * moveIncrement,
-        y: startY
+        x: snakeHead.x - 3 * moveIncrement,
+        y: snakeHead.y
     }, {
-        x: startX - 4 * moveIncrement,
-        y: startY
+        x: snakeHead.x - 4 * moveIncrement,
+        y: snakeHead.y
     }, )
 
     randomizeApplePlacement();
 }
 
-var snakeHead = [{
-    x: startX,
-    y: startY
+var snakeHeadPiece = [{
+    x: snakeHead.x,
+    y: snakeHead.y
 }];
 
 var snake = [{
-        x: startX - moveIncrement,
-        y: startY
+        x: snakeHead.x - moveIncrement,
+        y: snakeHead.y
     },
     {
-        x: startX - 2 * moveIncrement,
-        y: startY
+        x: snakeHead.x - 2 * moveIncrement,
+        y: snakeHead.y
     },
     {
-        x: startX - 3 * moveIncrement,
-        y: startY
+        x: snakeHead.x - 3 * moveIncrement,
+        y: snakeHead.y
     },
     {
-        x: startX - 4 * moveIncrement,
-        y: startY
+        x: snakeHead.x - 4 * moveIncrement,
+        y: snakeHead.y
     },
 ];
 
 function drawSnake() {
-    snakeHead.forEach(drawSnakeCube)
+    snakeHeadPiece.forEach(drawSnakeCube)
     snake.forEach(drawSnakeCube);
 }
 
 function drawSnakeCube(snakeCube) {
 
-    context.fillStyle = 'green';
-    context.strokestyle = 'darkgreen';
+    context.fillStyle = snakeHead.color;
+    context.strokestyle = snakeHead.strokeColor;
 
-    context.fillRect(snakeCube.x, snakeCube.y, 10, 10);
-    context.strokeRect(snakeCube.x, snakeCube.y, 10, 10);
+    context.fillRect(snakeCube.x, snakeCube.y, snakeHead.length, snakeHead.width);
+    context.strokeRect(snakeCube.x, snakeCube.y, snakeHead.length, snakeHead.width);
 }
 
 function getRange(max, min) {
@@ -227,8 +235,8 @@ function getRange(max, min) {
 }
 
 function randomizeApplePlacement() {
-    appleX = getRange(78, 1) * randomincrement;
-    appleY = getRange(58, 1) * randomincrement;
+    apple.x = getRange(78, 1) * randomincrement;
+    apple.y = getRange(58, 1) * randomincrement;
 }
 
 document.addEventListener('keydown', keyDownHandler);
@@ -251,59 +259,59 @@ function keyDownHandler(ev) {
 }
 
 function upArrow() {
-    snakeHead.unshift({
-        x: startX,
-        y: startY - moveIncrement
+    snakeHeadPiece.unshift({
+        x: snakeHead.x,
+        y: snakeHead.y - moveIncrement
     });
-    snakeHead.pop();
+    snakeHeadPiece.pop();
     snake.unshift({
-        x: startX,
-        y: startY
+        x: snakeHead.x,
+        y: snakeHead.y
     });
-    startY -= moveIncrement;
+    snakeHead.y -= moveIncrement;
     snake.pop();
 }
 
 
 function downArrow() {
-    snakeHead.unshift({
-        x: startX,
-        y: startY + moveIncrement
+    snakeHeadPiece.unshift({
+        x: snakeHead.x,
+        y: snakeHead.y + moveIncrement
     });
-    snakeHead.pop();
+    snakeHeadPiece.pop();
     snake.unshift({
-        x: startX,
-        y: startY
+        x: snakeHead.x,
+        y: snakeHead.y
     });
-    startY += moveIncrement;
+    snakeHead.y += moveIncrement;
     snake.pop();
 }
 
 function rightArrow() {
-    snakeHead.unshift({
-        x: startX + moveIncrement,
-        y: startY
+    snakeHeadPiece.unshift({
+        x: snakeHead.x + moveIncrement,
+        y: snakeHead.y
     });
-    snakeHead.pop();
+    snakeHeadPiece.pop();
     snake.unshift({
-        x: startX,
-        y: startY
+        x: snakeHead.x,
+        y: snakeHead.y
     });
-    startX += moveIncrement;
+    snakeHead.x += moveIncrement;
     snake.pop();
 
 }
 
 function leftArrow() {
-    snakeHead.unshift({
-        x: startX - moveIncrement,
-        y: startY
+    snakeHeadPiece.unshift({
+        x: snakeHead.x - moveIncrement,
+        y: snakeHead.y
     });
-    snakeHead.pop();
+    snakeHeadPiece.pop();
     snake.unshift({
-        x: startX,
-        y: startY
+        x: snakeHead.x,
+        y: snakeHead.y
     });
-    startX -= moveIncrement;
+    snakeHead.x -= moveIncrement;
     snake.pop();
 }
